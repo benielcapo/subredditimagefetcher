@@ -33,7 +33,7 @@ class Fetcher {
             if (RETURN_URL) {
                 return IMAGE_URL
             } else {
-                SaveToPath(WHERE_TO_STORE, IMAGE_URL)
+                this.SaveToPath(WHERE_TO_STORE, IMAGE_URL)
             }
         } catch (ERR) {
             throw new Error(ERR); 
