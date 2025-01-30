@@ -17,23 +17,29 @@ class Fetcher {
           throw new Error(err)
         }
     }
+
+    IsImage(url) {
+        return url.includes('.gifv') && url.includes('.jpg') || url.includes('.png') || url.includes('.gif') || url.includes('.jpeg')
+    }
     
     async GetImageFromSubreddit(SUBREDDIT, WHERE_TO_STORE, RETURN_URL) {
         if (!SUBREDDIT) {throw new Error("You didnt specify the subreddit!");}
         try {
-            var LINK = "https://www.reddit.com/r/" + SUBREDDIT + "/.json"
+            var LINK = "https://api.reddit.com/r/" + SUBREDDIT
             var RES = await fetch(LINK)
             var DATA = await RES.json()
             var _ = DATA.data.children
-            var POSTS = _.filter(POST => POST.data.thumbnail && POST.data.thumbnail.startsWith("http")) || {}
-            if (POSTS.length == 0) {throw new Error("There are 0 posts with images")}
-            var POST = POSTS[Math.floor(Math.random() * POSTS.length)]
-            var POST_DATA = POST.data
-            var IMAGE_URL = POST_DATA.thumbnail
+            var IMAGES = []
+            _.forEach(POSTREAL => {
+                if (this.IsImage(POSTREAL.data.url)) {
+                    IMAGES.push(POSTREAL.data.url)
+                }
+            });
+            if (IMAGES.length === 0) {throw new Error("Bru no post had images crazy yk what else is crazy");}
             if (RETURN_URL) {
-                return IMAGE_URL
+                return IMAGES[Math.floor(Math.random() * IMAGES.length)]
             } else {
-                this.SaveToPath(WHERE_TO_STORE, IMAGE_URL)
+                this.SaveToPath(WHERE_TO_STORE, IMAGES[Math.floor(Math.random() * IMAGES.length)])
             }
         } catch (ERR) {
             throw new Error(ERR); 
